@@ -10,13 +10,18 @@ export const TweetMockupScene: React.FC<{
   const { fps } = useVideoConfig();
 
   // Background gradient animation
-  const bgPos = interpolate(frame, [0, 300], [0, 100], { extrapolateRight: 'clamp' });
+  const bgPos = interpolate(frame, [0, 300], [0, 100], { extrapolateRight: 'clamp', easing: Easing.inOut(Easing.ease) });
   
-  // Tweet card pop in
+  // Tweet card pop in and swoop
   const scale = spring({
     frame,
     fps,
-    config: { damping: 14, stiffness: 120 },
+    config: { damping: 12, stiffness: 150 }, // slightly faster and punchier
+  });
+  
+  const rotate = interpolate(frame, [0, 20], [8, 0], { 
+    extrapolateRight: 'clamp',
+    easing: Easing.out(Easing.exp)
   });
   
   const opacity = interpolate(frame, [0, 15], [0, 1], { extrapolateRight: 'clamp' });
@@ -42,8 +47,8 @@ export const TweetMockupScene: React.FC<{
         border: '1px solid rgba(255, 255, 255, 0.1)',
         borderRadius: '24px',
         padding: '50px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-        transform: `scale(${scale})`,
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255,255,255,0.05)',
+        transform: `scale(${scale}) rotate(${rotate}deg)`,
         opacity,
         display: 'flex',
         flexDirection: 'column',

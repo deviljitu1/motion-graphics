@@ -27,13 +27,13 @@ export const SearchAnimationScene: React.FC<{
     config: { damping: 12 },
   });
 
-  // Cursor movement
-  // Starts near bottom right, moves up to the search button around frame 70-90
+  // Cursor movement with smoother human-like easing
+  const cursorEasing = Easing.bezier(0.25, 1, 0.5, 1);
   const cursorX = interpolate(frame, [0, 60, 75, 90], [800, 800, 800, 250], {
-    extrapolateRight: 'clamp',
+    extrapolateRight: 'clamp', easing: cursorEasing
   });
   const cursorY = interpolate(frame, [0, 60, 75, 90], [600, 600, 600, 40], {
-    extrapolateRight: 'clamp',
+    extrapolateRight: 'clamp', easing: cursorEasing
   });
   
   // Click effect at frame 90
@@ -46,8 +46,9 @@ export const SearchAnimationScene: React.FC<{
   const buttonScale = frame >= 90 ? interpolate(clickScale, [0, 0.5, 1], [1, 0.9, 1]) : 1;
 
   // Results page transition (after click)
-  const resultsOpacity = interpolate(frame, [100, 110], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const searchBarMoveY = interpolate(frame, [100, 120], [0, -400], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.inOut(Easing.ease) });
+  const resultsTransition = spring({ frame: frame - 100, fps, config: { damping: 14 } });
+  const resultsOpacity = interpolate(resultsTransition, [0, 1], [0, 1], { extrapolateRight: 'clamp' });
+  const searchBarMoveY = interpolate(resultsTransition, [0, 1], [0, -400], { extrapolateRight: 'clamp' });
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#f8f9fa', fontFamily: 'sans-serif', alignItems: 'center', justifyContent: 'center' }}>
@@ -129,7 +130,7 @@ export const SearchAnimationScene: React.FC<{
             transform: `translate(${cursorX}px, ${cursorY}px)`,
             zIndex: 10,
           }}>
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(2px 4px 6px rgba(0,0,0,0.3))' }}>
               <path d="M5.5 3.5L19 12.5L12 14.5L16 22L13 23L9 15.5L4 19V3.5Z" fill="black" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
             </svg>
           </div>
