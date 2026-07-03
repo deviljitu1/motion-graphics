@@ -20,7 +20,7 @@ export async function POST(req: Request) {
           content: `You are an AI Video Director. Based on the user's prompt, generate a full storyboard timeline for a motion graphics video.
 You MUST respond with ONLY a valid JSON object matching this exact structure:
 {
-  "theme": "HeroScene", // Must be exactly "HeroScene", "CyberpunkScene", or "MinimalistScene" based on the prompt's vibe
+  "theme": "HeroScene", // Must be EXACTLY one of: "HeroScene", "CyberpunkScene", "MinimalistScene", "SearchAnimationScene" (best for tutorials/questions), or "TweetMockupScene" (best for viral quotes/announcements)
   "brandColor": "#ff00ff", // A hex color that fits the prompt
   "scenes": [
     {

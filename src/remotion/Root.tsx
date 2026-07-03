@@ -7,7 +7,7 @@ export const RemotionRoot: React.FC = () => {
     <>
       <Composition 
         id="StoryTimeline" 
-        component={StoryTimeline} 
+        component={StoryTimeline as React.FC<any>} 
         durationInFrames={900} // This is just a default, the Player overrides it dynamically
         fps={30}
         width={1920}

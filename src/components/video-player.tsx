@@ -9,7 +9,7 @@ import { Loader2, Download, Film, Clock } from "lucide-react";
 export default function VideoPlayer() {
   const [brandColor, setBrandColor] = useState("#a855f7");
   const [aspectRatio, setAspectRatio] = useState<"16:9" | "9:16" | "1:1">("16:9");
-  const [template, setTemplate] = useState<"HeroScene" | "CyberpunkScene" | "MinimalistScene">("HeroScene");
+  const [template, setTemplate] = useState<"HeroScene" | "CyberpunkScene" | "MinimalistScene" | "SearchAnimationScene" | "TweetMockupScene">("SearchAnimationScene");
   
   const [scenes, setScenes] = useState<SceneData[]>([
     {
@@ -154,6 +154,8 @@ export default function VideoPlayer() {
                   <option value="HeroScene">Standard Clean</option>
                   <option value="CyberpunkScene">Cyberpunk Grid</option>
                   <option value="MinimalistScene">Minimalist Sliding</option>
+                  <option value="SearchAnimationScene">Google Search</option>
+                  <option value="TweetMockupScene">Viral Tweet Mockup</option>
                 </select>
               </div>
 

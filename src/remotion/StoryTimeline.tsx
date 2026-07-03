@@ -3,6 +3,8 @@ import { Series } from 'remotion';
 import { HeroScene } from './scenes/HeroScene';
 import { CyberpunkScene } from './scenes/CyberpunkScene';
 import { MinimalistScene } from './scenes/MinimalistScene';
+import { SearchAnimationScene } from './scenes/SearchAnimationScene';
+import { TweetMockupScene } from './scenes/TweetMockupScene';
 
 export type SceneData = {
   title: string;
@@ -10,14 +12,18 @@ export type SceneData = {
   durationInSeconds: number;
 };
 
+export type ThemeType = "HeroScene" | "CyberpunkScene" | "MinimalistScene" | "SearchAnimationScene" | "TweetMockupScene";
+
 interface StoryTimelineProps {
-  theme: "HeroScene" | "CyberpunkScene" | "MinimalistScene";
+  theme: ThemeType;
   brandColor: string;
   scenes: SceneData[];
 }
 
 export const StoryTimeline: React.FC<StoryTimelineProps> = ({ theme, brandColor, scenes }) => {
   const SceneComponent = 
+    theme === "SearchAnimationScene" ? SearchAnimationScene :
+    theme === "TweetMockupScene" ? TweetMockupScene :
     theme === "CyberpunkScene" ? CyberpunkScene : 
     theme === "MinimalistScene" ? MinimalistScene : HeroScene;
 
