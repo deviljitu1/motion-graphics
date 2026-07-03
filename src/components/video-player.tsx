@@ -5,11 +5,12 @@ import { Player } from "@remotion/player";
 import { StoryTimeline, SceneData } from "@/remotion/StoryTimeline";
 import { Button } from "@/components/ui/button";
 import { Loader2, Download, Film, Clock } from "lucide-react";
+import { ThemeType } from "@/remotion/StoryTimeline";
 
-export default function VideoPlayer() {
+export default function VideoPlayer({ initialTemplate = "SearchAnimationScene" }: { initialTemplate?: ThemeType }) {
   const [brandColor, setBrandColor] = useState("#a855f7");
   const [aspectRatio, setAspectRatio] = useState<"16:9" | "9:16" | "1:1">("16:9");
-  const [template, setTemplate] = useState<"HeroScene" | "CyberpunkScene" | "MinimalistScene" | "SearchAnimationScene" | "TweetMockupScene">("SearchAnimationScene");
+  const [template, setTemplate] = useState<ThemeType>(initialTemplate);
   
   const [scenes, setScenes] = useState<SceneData[]>([
     {
