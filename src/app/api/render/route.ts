@@ -7,9 +7,9 @@ import fs from 'fs';
 
 export async function POST(req: Request) {
   try {
-    const { template, title, subtitle, brandColor } = await req.json();
+    const { template, theme, scenes, brandColor } = await req.json();
 
-    const compositionId = template || "HeroScene";
+    const compositionId = template || "StoryTimeline";
     
     console.log("Bundling Remotion project...");
     const bundleLocation = await bundle({
@@ -17,8 +17,8 @@ export async function POST(req: Request) {
     });
 
     const inputProps = {
-      title,
-      subtitle,
+      theme,
+      scenes,
       brandColor,
     };
 

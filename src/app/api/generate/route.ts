@@ -17,13 +17,20 @@ export async function POST(req: Request) {
       messages: [
         {
           role: "system",
-          content: `You are an AI that configures a motion graphics video based on user descriptions. 
-You MUST respond with ONLY a valid JSON object matching this structure:
+          content: `You are an AI Video Director. Based on the user's prompt, generate a full storyboard timeline for a motion graphics video.
+You MUST respond with ONLY a valid JSON object matching this exact structure:
 {
-  "title": "A short, punchy title (max 5 words)",
-  "subtitle": "A slightly longer explanatory subtitle (max 10 words)",
-  "brandColor": "A hex color code (e.g. #ff0000) that best fits the theme"
+  "theme": "HeroScene", // Must be exactly "HeroScene", "CyberpunkScene", or "MinimalistScene" based on the prompt's vibe
+  "brandColor": "#ff00ff", // A hex color that fits the prompt
+  "scenes": [
+    {
+      "title": "Short punchy text (max 5 words)",
+      "subtitle": "Explanatory text (max 10 words)",
+      "durationInSeconds": 4 // How long this scene should be shown (e.g., 3 to 7 seconds)
+    }
+  ]
 }
+Generate between 3 and 7 scenes that tell a compelling story, explain a product, or fit the user's description. The total duration of all scenes combined must be at least 15 seconds, up to a maximum of 60 seconds.
 Do not include markdown blocks or any other text, just the raw JSON object.`,
         },
         {
