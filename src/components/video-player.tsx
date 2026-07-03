@@ -15,8 +15,21 @@ export default function VideoPlayer({ initialTemplate = "SearchAnimationScene" }
   const [scenes, setScenes] = useState<SceneData[]>([
     {
       title: "MotionForge AI",
-      subtitle: "Professional videos in seconds.",
-      durationInSeconds: 5
+      subtitle: "The future of automated motion graphics.",
+      emoji: "✨",
+      durationInSeconds: 3
+    },
+    {
+      title: "Built for Speed",
+      subtitle: "Generate videos in seconds, not hours.",
+      emoji: "⚡",
+      durationInSeconds: 3
+    },
+    {
+      title: "Try it today",
+      subtitle: "Export directly to MP4.",
+      emoji: "🎬",
+      durationInSeconds: 4
     }
   ]);
 

@@ -1,87 +1,75 @@
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate, Easing } from 'remotion';
 
-interface SceneProps {
+export const CyberpunkScene: React.FC<{
   title: string;
   subtitle: string;
+  emoji?: string;
   brandColor: string;
-}
-
-export const CyberpunkScene: React.FC<SceneProps> = ({ title, subtitle, brandColor }) => {
+}> = ({ title, subtitle, emoji, brandColor }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const titleProgress = spring({
+  // Entrance pop
+  const scale = spring({
     frame,
     fps,
-    config: { damping: 10, mass: 0.5 },
+    config: { damping: 10, stiffness: 120 },
   });
 
-  const titleScale = interpolate(titleProgress, [0, 1], [0.5, 1]);
-  const titleOpacity = interpolate(titleProgress, [0, 1], [0, 1]);
-
-  const subtitleProgress = spring({
-    frame: frame - 20,
-    fps,
-    config: { damping: 10 },
-  });
-
-  const subtitleOpacity = interpolate(subtitleProgress, [0, 1], [0, 1]);
-
-  // A grid background effect
-  const backgroundY = (frame * 2) % 100;
+  const glitchOffsetX = frame % 10 === 0 ? interpolate(frame, [0, 100], [-10, 10], {extrapolateRight: 'clamp'}) : 0;
+  
+  // Neon pulse
+  const pulse = interpolate(Math.sin(frame / 5), [-1, 1], [0.5, 1]);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: '#050510', overflow: 'hidden' }}>
-      {/* Cyberpunk Grid */}
-      <div 
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `linear-gradient(${brandColor}33 1px, transparent 1px), linear-gradient(90deg, ${brandColor}33 1px, transparent 1px)`,
-          backgroundSize: '100px 100px',
-          backgroundPosition: `0 ${backgroundY}px`,
-          transform: 'perspective(500px) rotateX(60deg) scale(2)',
-          transformOrigin: 'bottom',
-          opacity: 0.4
-        }}
-      />
+    <AbsoluteFill style={{ 
+      backgroundColor: '#09090b', 
+      fontFamily: '"Courier New", Courier, monospace', 
+      alignItems: 'center', 
+      justifyContent: 'center',
+      color: brandColor,
+      backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)',
+      backgroundSize: '40px 40px',
+    }}>
       
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', zIndex: 10 }}>
-        <h1
-          style={{
-            color: 'white',
-            fontSize: '140px',
-            fontWeight: '900',
-            opacity: titleOpacity,
-            transform: `scale(${titleScale})`,
-            textAlign: 'center',
-            fontFamily: 'monospace',
-            textTransform: 'uppercase',
-            textShadow: `0 0 20px ${brandColor}, 0 0 40px ${brandColor}`,
-            margin: 0,
-            letterSpacing: '10px'
-          }}
-        >
+      <div style={{
+        transform: `scale(${scale}) translateX(${glitchOffsetX}px)`,
+        border: `4px solid ${brandColor}`,
+        padding: '60px',
+        boxShadow: `0 0 ${40 * pulse}px ${brandColor}88, inset 0 0 ${20 * pulse}px ${brandColor}88`,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        backdropFilter: 'blur(10px)',
+        clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 40px), calc(100% - 40px) 100%, 0 100%)',
+        textAlign: 'center',
+        maxWidth: '1000px',
+      }}>
+        
+        {emoji && (
+          <div style={{ fontSize: '80px', marginBottom: '20px', filter: 'grayscale(100%) sepia(100%) hue-rotate(250deg) saturate(500%)' }}>
+            {emoji}
+          </div>
+        )}
+
+        <h1 style={{ 
+          fontSize: '80px', 
+          fontWeight: 'bold', 
+          margin: '0 0 20px 0', 
+          textTransform: 'uppercase',
+          textShadow: `4px 4px 0px rgba(255,0,0,0.5), -4px -4px 0px rgba(0,255,255,0.5)`
+        }}>
           {title}
         </h1>
-        <p
-          style={{
-            color: 'white',
-            fontSize: '50px',
-            opacity: subtitleOpacity,
-            textAlign: 'center',
-            fontFamily: 'sans-serif',
-            marginTop: '40px',
-            backgroundColor: brandColor,
-            padding: '10px 30px',
-            border: '2px solid white',
-            boxShadow: `5px 5px 0px white`
-          }}
-        >
-          {subtitle}
+        <p style={{ 
+          fontSize: '32px', 
+          color: 'white',
+          margin: 0,
+          opacity: 0.9
+        }}>
+          &gt; {subtitle}_
         </p>
       </div>
+
     </AbsoluteFill>
   );
 };

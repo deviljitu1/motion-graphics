@@ -9,6 +9,7 @@ import { TweetMockupScene } from './scenes/TweetMockupScene';
 export type SceneData = {
   title: string;
   subtitle: string;
+  emoji?: string;
   durationInSeconds: number;
 };
 

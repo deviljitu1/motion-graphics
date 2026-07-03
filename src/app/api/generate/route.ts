@@ -26,6 +26,7 @@ You MUST respond with ONLY a valid JSON object matching this exact structure:
     {
       "title": "Short punchy text (max 5 words)",
       "subtitle": "Explanatory text (max 10 words)",
+      "emoji": "🚀", // A single relevant emoji (or leave blank)
       "durationInSeconds": 4 // How long this scene should be shown (e.g., 3 to 7 seconds)
     }
   ]
