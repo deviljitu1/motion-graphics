@@ -3,17 +3,21 @@
 import { useState } from "react";
 import { Player } from "@remotion/player";
 import { HeroScene } from "@/remotion/scenes/HeroScene";
+import { CyberpunkScene } from "@/remotion/scenes/CyberpunkScene";
+import { MinimalistScene } from "@/remotion/scenes/MinimalistScene";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Download } from "lucide-react";
 
 export default function VideoPlayer() {
   const [title, setTitle] = useState("MotionForge AI");
   const [subtitle, setSubtitle] = useState("Professional videos in seconds.");
   const [brandColor, setBrandColor] = useState("#a855f7");
   const [aspectRatio, setAspectRatio] = useState<"16:9" | "9:16" | "1:1">("16:9");
+  const [template, setTemplate] = useState<"HeroScene" | "CyberpunkScene" | "MinimalistScene">("HeroScene");
 
   const [aiPrompt, setAiPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const handleGenerate = async () => {
     if (!aiPrompt) return;
@@ -43,6 +47,43 @@ export default function VideoPlayer() {
     }
   };
 
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    try {
+      const response = await fetch("/api/render", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          template,
+          title,
+          subtitle,
+          brandColor
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to render video");
+      }
+
+      // Handle the blob download
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.href = url;
+      a.download = `${template}-motion-graphic.mp4`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error: any) {
+      console.error(error);
+      alert("Render failed: " + error.message + "\n(Note: Vercel may timeout for 30s videos. Test this locally!)");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   // Determine width and height based on aspect ratio
   let width = 1920;
   let height = 1080;
@@ -54,6 +95,11 @@ export default function VideoPlayer() {
     width = 1080;
     height = 1080;
   }
+
+  // Get active component
+  const ActiveComponent = 
+    template === "HeroScene" ? HeroScene :
+    template === "CyberpunkScene" ? CyberpunkScene : MinimalistScene;
 
   return (
     <div className="w-full max-w-6xl mx-auto flex flex-col gap-8">
@@ -94,6 +140,19 @@ export default function VideoPlayer() {
           <h2 className="text-xl font-semibold mb-2 text-white">Customize Video</h2>
           
           <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Template</label>
+              <select
+                value={template}
+                onChange={(e) => setTemplate(e.target.value as any)}
+                className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:border-purple-500 appearance-none"
+              >
+                <option value="HeroScene">Standard Theme</option>
+                <option value="CyberpunkScene">Cyberpunk Grid</option>
+                <option value="MinimalistScene">Minimalist Sliding</option>
+              </select>
+            </div>
+
             <div>
               <label className="block text-sm text-gray-400 mb-1">Title</label>
               <input 
@@ -138,25 +197,45 @@ export default function VideoPlayer() {
                 <Button 
                   variant={aspectRatio === "16:9" ? "default" : "outline"} 
                   onClick={() => setAspectRatio("16:9")}
-                  className={aspectRatio === "16:9" ? "bg-purple-600 hover:bg-purple-700" : "text-white hover:text-white hover:bg-white/10 border-white/20"}
+                  className={aspectRatio === "16:9" ? "bg-purple-600 hover:bg-purple-700 flex-1" : "text-white hover:text-white hover:bg-white/10 border-white/20 flex-1"}
                 >
                   16:9
                 </Button>
                 <Button 
                   variant={aspectRatio === "9:16" ? "default" : "outline"} 
                   onClick={() => setAspectRatio("9:16")}
-                  className={aspectRatio === "9:16" ? "bg-purple-600 hover:bg-purple-700" : "text-white hover:text-white hover:bg-white/10 border-white/20"}
+                  className={aspectRatio === "9:16" ? "bg-purple-600 hover:bg-purple-700 flex-1" : "text-white hover:text-white hover:bg-white/10 border-white/20 flex-1"}
                 >
                   9:16
                 </Button>
                 <Button 
                   variant={aspectRatio === "1:1" ? "default" : "outline"} 
                   onClick={() => setAspectRatio("1:1")}
-                  className={aspectRatio === "1:1" ? "bg-purple-600 hover:bg-purple-700" : "text-white hover:text-white hover:bg-white/10 border-white/20"}
+                  className={aspectRatio === "1:1" ? "bg-purple-600 hover:bg-purple-700 flex-1" : "text-white hover:text-white hover:bg-white/10 border-white/20 flex-1"}
                 >
                   1:1
                 </Button>
               </div>
+            </div>
+            
+            <div className="pt-4 border-t border-white/10">
+              <Button 
+                onClick={handleDownload}
+                disabled={isDownloading}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold h-12 disabled:opacity-50"
+              >
+                {isDownloading ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Rendering MP4... (Takes ~1 min)
+                  </>
+                ) : (
+                  <>
+                    <Download className="mr-2 h-5 w-5" />
+                    Download MP4
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         </div>
@@ -164,13 +243,13 @@ export default function VideoPlayer() {
         {/* Video Player */}
         <div className="w-full md:w-2/3 rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-black flex justify-center items-center h-full min-h-[400px]">
           <Player
-            component={HeroScene}
+            component={ActiveComponent}
             inputProps={{
               title,
               subtitle,
               brandColor,
             }}
-            durationInFrames={150}
+            durationInFrames={900}
             fps={30}
             compositionWidth={width}
             compositionHeight={height}
